@@ -1,9 +1,10 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy_serializer import SerializerMixin
 
 db = SQLAlchemy()
 
-class User(db.Model):
-    _tablename_ = 'user'
+class User(db.Model, SerializerMixin):
+    _tablename_ = 'users'
     id = db.Column(db.Integer, primary_key= True)
     username = db.Column(db.String, nullable= False)
     email = db.Column(db.String, nullable= False)
@@ -12,7 +13,9 @@ class User(db.Model):
     bookings=db.relationship('Booking',back_populates='users')
     reviews=db.relationship('Reviews',back_populates='users')
 
-class Event(db.Model):
+    serialize_rules=('-bookings.users')
+
+class Event(db.Model, SerializerMixin):
     tablename='events'
     id= db.Column(db.Integer,primary_key=True)
     name=db.Column(db.String,nullable=False)
@@ -24,7 +27,7 @@ class Event(db.Model):
     bookings=db.relationship('Booking',back_populates='events')
    
 
-class Booking(db.Model):
+class Booking(db.Model, SerializerMixin):
     tablename='bookings'
     id= db.Column(db.Integer,primary_key=True)
     event_id=db.Column(db.String,db.ForeignKey('event.id'))
@@ -32,7 +35,7 @@ class Booking(db.Model):
     organiser=db.relationship('Event',back_populates='bookings')
     user=db.relationship('User',back_populates='bookings')
 
-class Reviews(db.Model):
+class Reviews(db.Model, SerializerMixin):
     tablename='reviews'
     id= db.Column(db.Integer,primary_key=True)
     event_id = db.Column(db.Integer,db.ForeignKey('event.id'))
