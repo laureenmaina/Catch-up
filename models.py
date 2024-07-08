@@ -13,7 +13,7 @@ class User(db.Model, SerializerMixin):
     bookings=db.relationship('Booking',back_populates='users')
     reviews=db.relationship('Reviews',back_populates='users')
 
-    serialize_rules=('-bookings.users')
+    serialize_rules=('-bookings.users','reviews.users',)
 
 class Event(db.Model, SerializerMixin):
     tablename='events'
@@ -25,6 +25,8 @@ class Event(db.Model, SerializerMixin):
     user_id=db.Column(db.Integer,db.ForeignKey('user.id'))
     organiser=db.relationship('User',back_populates='events')
     bookings=db.relationship('Booking',back_populates='events')
+
+    serialize_rules=('-organiser.events','-bookings.events')
    
 
 class Booking(db.Model, SerializerMixin):
@@ -34,6 +36,8 @@ class Booking(db.Model, SerializerMixin):
     user_id=db.Column(db.Integer,db.ForeignKey('user.id'))
     organiser=db.relationship('Event',back_populates='bookings')
     user=db.relationship('User',back_populates='bookings')
+
+    serialize_rules=('')
 
 class Reviews(db.Model, SerializerMixin):
     tablename='reviews'
